@@ -163,15 +163,17 @@ S_nv_is_integer(pTHX_ NV const nv) {
 int
 typetiny_tc_Int(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
-    if(SvPOKp(sv)){
-        int const num_type = grok_number(SvPVX(sv), SvCUR(sv), NULL);
-        return num_type && !(num_type & IS_NUMBER_NOT_INT);
-    }
-    else if(SvIOKp(sv)){
-        return TRUE;
-    }
-    else if(SvNOKp(sv)) {
-        return S_nv_is_integer(aTHX_ SvNVX(sv));
+    if (SvOK(sv) && !SvROK(sv) && !isGV(sv)) {
+        if(SvPOKp(sv)){
+            int const num_type = grok_number(SvPVX(sv), SvCUR(sv), NULL);
+            return num_type && !(num_type & IS_NUMBER_NOT_INT);
+        }
+        else if(SvIOKp(sv)){
+            return TRUE;
+        }
+        else if(SvNOKp(sv)) {
+            return S_nv_is_integer(aTHX_ SvNVX(sv));
+        }
     }
     return FALSE;
 }
@@ -256,7 +258,7 @@ typetiny_tc_FileHandle(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 int
 typetiny_tc_Object(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
-    return SvROK(sv) && SvOBJECT(SvRV(sv)) && !SvRXOK(sv);
+    return SvROK(sv) && SvOBJECT(SvRV(sv));
 }
 
 /* Parameterized type constraints */
