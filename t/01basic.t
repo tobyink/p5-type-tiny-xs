@@ -23,7 +23,7 @@ the same terms as the Perl 5 programming language system itself.
 
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 11;
 
 use_ok('Type::Tiny::XS');
 
@@ -37,3 +37,6 @@ ok $code->( [{foo => 1, bar => 2}, {baz => 3}, {}] );
 ok not $code->( [{foo => 1, bar => undef}, {baz => 3}, {}] );
 ok not $code->( {} );
 
+ok Type::Tiny::XS::is_known(\&Type::Tiny::XS::Str);
+ok Type::Tiny::XS::is_known($code);
+ok not Type::Tiny::XS::is_known(sub { 42 });

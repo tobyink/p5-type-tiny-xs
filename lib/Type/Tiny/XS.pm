@@ -10,13 +10,30 @@ our $VERSION   = '0.001';
 
 __PACKAGE__->XSLoader::load($VERSION);
 
-my %simple = (map +( $_ => __PACKAGE__ . "::$_" ), qw/
+use Scalar::Util qw(refaddr);
+
+my %names = (map +( $_ => __PACKAGE__ . "::$_" ), qw/
 	Any ArrayRef Bool ClassName CodeRef Defined
 	FileHandle GlobRef HashRef Int Num Object
 	Ref RegexpRef ScalarRef Str Undef Value
 /);
+$names{Item} = $names{Any};
 
-$simple{Item} = $simple{Any};
+my %coderefs;
+sub _know {
+	my ($coderef, $type) = @_;
+	$coderefs{refaddr($coderef)} = $type;
+}
+
+sub is_known {
+	my $coderef = shift;
+	$coderefs{refaddr($coderef)};
+}
+
+for (reverse sort keys %names) {
+	no strict qw(refs);
+	_know $_, \&{$names{$_}};
+}
 
 my $id = 0;
 
@@ -25,8 +42,8 @@ sub get_coderef_for {
 	
 	return do {
 		no strict qw(refs);
-		\&{ $simple{$type} }
-	} if exists $simple{$type};
+		\&{ $names{$type} }
+	} if exists $names{$type};
 	
 	my $made;
 	
@@ -60,7 +77,8 @@ sub get_coderef_for {
 	if ($made) {
 		no strict qw(refs);
 		my $slot = sprintf('%s::AUTO::TC%d', __PACKAGE__, ++$id);
-		$simple{$type} = $slot;
+		$names{$type} = $slot;
+		_know($made, $type);
 		*$slot = $made;
 		return $made;
 	}
@@ -70,8 +88,8 @@ sub get_coderef_for {
 
 sub get_subname_for {
 	my $type = $_[0];
-	get_coderef_for($type) unless exists $simple{$type};
-	$simple{$type};
+	get_coderef_for($type) unless exists $names{$type};
+	$names{$type};
 }
 
 1;
@@ -109,6 +127,10 @@ constraint.
 =item C<< Type::Tiny::XS::get_subname_for($type) >>
 
 Like C<get_coderef_for> but returns the name of such a sub as a string.
+
+=item C<< Type::Tiny::XS::is_known($coderef) >>
+
+Returns true if the coderef was provided by Type::Tiny::XS.
 
 =back
 
