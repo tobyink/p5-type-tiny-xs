@@ -4,3 +4,10 @@
 	issued  2014-07-10;
 	label   "Initial release".
 
+`Type-Tiny-XS 0.002 cpan:TOBYINK`
+	issued  2014-07-10;
+	changeset [
+		item "Make Int check act more like Type::Tiny."^^Change;
+		item "Make Object check act more like Type::Tiny."^^Change;
+		item "Provide Type::Tiny::XS::is_known() function."^^Addition;
+	].
