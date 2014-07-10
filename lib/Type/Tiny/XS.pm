@@ -32,7 +32,7 @@ sub is_known {
 
 for (reverse sort keys %names) {
 	no strict qw(refs);
-	_know $_, \&{$names{$_}};
+	_know \&{$names{$_}}, $_;
 }
 
 my $id = 0;
