@@ -17,3 +17,10 @@
 	changeset [
 		item "Further improvements to the Int check."^^Change;
 	].
+
+`Type-Tiny-XS 0.004 cpan:TOBYINK`
+	issued  2014-07-11;
+	changeset [
+		item "Clarify extent of supported API."^^Documentation;
+		item "Mention that get_*_for functions return undef if they cannot provide a suitable sub."^^Documentation;
+	].
