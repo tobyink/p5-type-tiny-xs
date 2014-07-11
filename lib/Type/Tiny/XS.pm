@@ -124,15 +124,31 @@ Given a supported type constraint name, such as C<< "Int" >>, returns
 a coderef that can be used to validate a parameter against this
 constraint.
 
+Returns undef if this module cannot provide a suitable coderef.
+
 =item C<< Type::Tiny::XS::get_subname_for($type) >>
 
 Like C<get_coderef_for> but returns the name of such a sub as a string.
+
+Returns undef if this module cannot provide a suitable sub name.
 
 =item C<< Type::Tiny::XS::is_known($coderef) >>
 
 Returns true if the coderef was provided by Type::Tiny::XS.
 
 =back
+
+In addition to the above functions, the subs returned by
+C<get_coderef_for> and C<get_subname_for> are considered part of the
+"supported API", but only for the lifetime of the Perl process that
+returned them.
+
+To clarify, if you call C<< get_subname_for("ArrayRef[Int]") >> in a
+script, this will return the name of a sub. That sub (which can be used
+to validate arrayrefs of integers) is now considered part of the
+supported API of Type::Tiny::XS until the script finishes running. Next
+time the script runs, there is no guarantee that the sub will continue
+to exist, or continue to do the same thing.
 
 =head1 BUGS
 
