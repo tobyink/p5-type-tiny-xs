@@ -11,3 +11,9 @@
 		item "Make Object check act more like Type::Tiny."^^Change;
 		item "Provide Type::Tiny::XS::is_known() function."^^Addition;
 	].
+
+`Type-Tiny-XS 0.003 cpan:TOBYINK`
+	issued  2014-07-11;
+	changeset [
+		item "Further improvements to the Int check."^^Change;
+	].
