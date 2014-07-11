@@ -25,6 +25,6 @@ install:
 before_script:
   - coverage-setup
 script:
-  - prove -l $(test-dirs)
+  - make all test
 after_success:
   - coverage-report
