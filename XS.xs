@@ -137,6 +137,25 @@ typetiny_tc_Num(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 }
 
 static int
+S_pv_is_integer(pTHX_ char* const pv) {
+    const char* p;
+    p = &pv[0];
+
+    /* -?[0-9]+ */
+    if(*p == '-') p++;
+
+    if (!*p) return FALSE;
+
+    while(*p){
+        if(!isDIGIT(*p)){
+            return FALSE;
+        }
+        p++;
+    }
+    return TRUE;
+}
+
+static int
 S_nv_is_integer(pTHX_ NV const nv) {
     if(nv == (NV)(IV)nv){
         return TRUE;
@@ -145,18 +164,7 @@ S_nv_is_integer(pTHX_ NV const nv) {
         char buf[64];  /* Must fit sprintf/Gconvert of longest NV */
         const char* p;
         (void)Gconvert(nv, NV_DIG, 0, buf);
-        p = &buf[0];
-
-        /* -?[0-9]+ */
-        if(*p == '-') p++;
-
-        while(*p){
-            if(!isDIGIT(*p)){
-                return FALSE;
-            }
-            p++;
-        }
-        return TRUE;
+        return S_pv_is_integer(aTHX_ buf);
     }
 }
 
@@ -165,8 +173,7 @@ typetiny_tc_Int(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     if (SvOK(sv) && !SvROK(sv) && !isGV(sv)) {
         if(SvPOKp(sv)){
-            int const num_type = grok_number(SvPVX(sv), SvCUR(sv), NULL);
-            return num_type && !(num_type & IS_NUMBER_NOT_INT);
+            return S_pv_is_integer(aTHX_ SvPVX(sv));
         }
         else if(SvIOKp(sv)){
             return TRUE;
