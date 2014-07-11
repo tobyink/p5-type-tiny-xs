@@ -28,4 +28,3 @@ script:
   - prove -l $(test-dirs)
 after_success:
   - coverage-report
-
