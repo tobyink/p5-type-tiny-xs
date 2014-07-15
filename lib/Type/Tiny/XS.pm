@@ -110,8 +110,11 @@ Type::Tiny::XS - provides an XS boost for some of Type::Tiny's built-in type con
 
 =head1 DESCRIPTION
 
-Current releases of Type::Tiny do not make use of Type::Tiny::XS. This
-distribution is just an experimental space for making stuff faster.
+This module is optionally used by L<Type::Tiny> 0.045_03 and above
+to provide faster, C-based implementations of some type constraints.
+(This package has only core dependencies, and does not depend on
+Type::Tiny, so other data validation frameworks might also consider
+using it!)
 
 Only the following two functions should be considered part of the
 supported API:
