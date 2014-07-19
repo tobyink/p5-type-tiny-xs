@@ -24,3 +24,12 @@
 		item "Clarify extent of supported API."^^Documentation;
 		item "Mention that get_*_for functions return undef if they cannot provide a suitable sub."^^Documentation;
 	].
+
+`Type-Tiny-XS 0.005 cpan:TOBYINK`
+	issued  2014-07-19;
+	changeset [
+		item "Document that Type::Tiny::XS is now being used by Type::Tiny."^^Documentation;
+		item "PositiveInt (which will be used by a future release of Types::Common::Numeric)."^^Addition;
+		item "PositiveOrZeroInt (which will be used by a future release of Types::Common::Numeric)."^^Addition;
+		item "NonEmptyStr (which will be used by a future release of Types::Common::String)."^^Addition;
+	].
