@@ -186,9 +186,67 @@ typetiny_tc_Int(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 }
 
 int
+typetiny_tc_PositiveInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
+    assert(sv);
+    if ((!SvOK(sv)) || SvROK(sv) || isGV(sv)) {
+        return FALSE;
+    }
+    if(SvPOKp(sv)){
+        if (!S_pv_is_integer(aTHX_ SvPVX(sv))) {
+            return FALSE;
+        }
+    }
+    else if(SvIOKp(sv)){
+        /* ok */
+    }
+    else if(SvNOKp(sv)) {
+        if (!S_nv_is_integer(aTHX_ SvNVX(sv))) {
+            return FALSE;
+        }
+    }
+    
+    int i = SvIVx(sv);
+    return ((i > 0) ? TRUE : FALSE);
+}
+
+int
+typetiny_tc_PositiveOrZeroInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
+    assert(sv);
+    if ((!SvOK(sv)) || SvROK(sv) || isGV(sv)) {
+        return FALSE;
+    }
+    if(SvPOKp(sv)){
+        if (!S_pv_is_integer(aTHX_ SvPVX(sv))) {
+            return FALSE;
+        }
+    }
+    else if(SvIOKp(sv)){
+        /* ok */
+    }
+    else if(SvNOKp(sv)) {
+        if (!S_nv_is_integer(aTHX_ SvNVX(sv))) {
+            return FALSE;
+        }
+    }
+    
+    int i = SvIVx(sv);
+    return ((i >= 0) ? TRUE : FALSE);
+}
+
+int
 typetiny_tc_Str(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     return SvOK(sv) && !SvROK(sv) && !isGV(sv);
+}
+
+int
+typetiny_tc_NonEmptyStr(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
+    assert(sv);
+    if (SvOK(sv) && !SvROK(sv) && !isGV(sv)) {
+        STRLEN l = sv_len(sv);
+        return( (l==0) ? FALSE : TRUE );
+    }
+    return FALSE;
 }
 
 int
@@ -609,8 +667,11 @@ BOOT:
     DEFINE_TC(Value);
     DEFINE_TC(Ref);
     DEFINE_TC(Str);
+    DEFINE_TC(NonEmptyStr);
     DEFINE_TC(Num);
     DEFINE_TC(Int);
+    DEFINE_TC(PositiveInt);
+    DEFINE_TC(PositiveOrZeroInt);
     DEFINE_TC(ScalarRef);
     DEFINE_TC(ArrayRef);
     DEFINE_TC(HashRef);

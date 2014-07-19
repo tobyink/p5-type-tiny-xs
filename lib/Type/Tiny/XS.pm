@@ -16,6 +16,7 @@ my %names = (map +( $_ => __PACKAGE__ . "::$_" ), qw/
 	Any ArrayRef Bool ClassName CodeRef Defined
 	FileHandle GlobRef HashRef Int Num Object
 	Ref RegexpRef ScalarRef Str Undef Value
+	PositiveInt PositiveOrZeroInt NonEmptyStr
 /);
 $names{Item} = $names{Any};
 
