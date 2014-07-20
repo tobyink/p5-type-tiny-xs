@@ -16,7 +16,8 @@ my %names = (map +( $_ => __PACKAGE__ . "::$_" ), qw/
 	Any ArrayRef Bool ClassName CodeRef Defined
 	FileHandle GlobRef HashRef Int Num Object
 	Ref RegexpRef ScalarRef Str Undef Value
-	PositiveInt PositiveOrZeroInt NonEmptyStr Map Tuple
+	PositiveInt PositiveOrZeroInt NonEmptyStr
+	Map Tuple Enum
 /);
 $names{Item} = $names{Any};
 
@@ -97,6 +98,11 @@ sub get_coderef_for {
 		my $methods = [ sort(split /,/, $1) ];
 		/^[^\W0-9]\w*$/ or return for @$methods;
 		$made = Type::Tiny::XS::Util::generate_can_predicate_for($methods);
+	}
+	
+	elsif ($type =~ /^Enum\[(.+)\]$/) {
+		my $strings = [ sort(split /,/, $1) ];
+		$made = _parameterize_Enum_for($strings);
 	}
 	
 	if ($made) {

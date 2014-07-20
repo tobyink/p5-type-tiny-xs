@@ -240,6 +240,12 @@ typetiny_tc_Str(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 }
 
 int
+typetiny_tc_Enum(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
+    assert(sv);
+    return SvOK(sv) && !SvROK(sv) && !isGV(sv);
+}
+
+int
 typetiny_tc_NonEmptyStr(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     if (SvOK(sv) && !SvROK(sv) && !isGV(sv)) {
@@ -423,6 +429,26 @@ typetiny_parameterized_Tuple(pTHX_ SV* const param, SV* const sv) {
         }
         return TRUE;
     }
+    return FALSE;
+}
+
+static int
+typetiny_parameterized_Enum(pTHX_ SV* const param, SV* const sv) {
+    assert(sv);
+    if(!(SvOK(sv) && !SvROK(sv) && !isGV(sv))) {
+        return FALSE;
+    }
+
+    AV* const av  = (AV*)SvRV(param);
+    I32 const len = av_len(av) + 1;
+    I32 i;
+    for(i = 0; i < len; i++){
+        SV* const x = *av_fetch(av, i, TRUE);
+        if(sv_eq(sv, x)){
+            return TRUE;
+        }
+    }
+
     return FALSE;
 }
 
@@ -738,6 +764,7 @@ BOOT:
     DEFINE_TC(ArrayRef);
     DEFINE_TC(HashRef);
     DEFINE_TC(Map);
+    DEFINE_TC(Enum);
     DEFINE_TC(Tuple);
     DEFINE_TC(CodeRef);
     DEFINE_TC(GlobRef);
@@ -765,6 +792,7 @@ CODE:
 #define TYPETINY_TC_HASH_REF  2
 #define TYPETINY_TC_MAP       3
 #define TYPETINY_TC_TUPLE     4
+#define TYPETINY_TC_ENUM      5
 
 CV*
 _parameterize_ArrayRef_for(SV* param)
@@ -774,11 +802,12 @@ ALIAS:
     _parameterize_Maybe_for    = TYPETINY_TC_MAYBE
     _parameterize_Map_for      = TYPETINY_TC_MAP
     _parameterize_Tuple_for    = TYPETINY_TC_TUPLE
+    _parameterize_Enum_for     = TYPETINY_TC_ENUM
 CODE:
 {
     check_fptr_t fptr;
     SV* const tc_code = param;
-    if(ix == TYPETINY_TC_MAP || ix == TYPETINY_TC_TUPLE) {
+    if(ix == TYPETINY_TC_MAP || ix == TYPETINY_TC_TUPLE || ix == TYPETINY_TC_ENUM) {
         if(!IsArrayRef(tc_code)){
             croak("Didn't supply an ARRAY reference");
         }
@@ -801,6 +830,9 @@ CODE:
         break;
     case TYPETINY_TC_TUPLE:
         fptr = typetiny_parameterized_Tuple;
+        break;
+    case TYPETINY_TC_ENUM:
+        fptr = typetiny_parameterized_Enum;
         break;
     default: /* Maybe type */
         fptr = typetiny_parameterized_Maybe;
