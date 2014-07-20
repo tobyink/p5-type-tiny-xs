@@ -58,16 +58,26 @@ sub get_coderef_for {
 		$made = _parameterize_HashRef_for($child);
 	}
 	
-	# Naïve parsing :-(
 	elsif ($type =~ /^Map\[(.+),(.+)\]$/) {
-		my $child1 = get_coderef_for($1) or return;
-		my $child2 = get_coderef_for($2) or return;
-		$made = _parameterize_Map_for( [$child1, $child2] );
+		my @children;
+		if (eval { require Type::Parser }) {
+			@children = map scalar(get_coderef_for($_)), _parse_parameters($type);
+		}
+		else {
+			push @children, get_coderef_for($1);
+			push @children, get_coderef_for($2);
+		}
+		@children==2 or return;
+		defined or return for @children;
+		$made = _parameterize_Map_for( \@children );
 	}
 	
-	# Naïve parsing :-(
 	elsif ($type =~ /^Tuple\[(.+)\]$/) {
-		my @children = map get_coderef_for($_), split /,/, $1;
+		my @children = 
+			map scalar(get_coderef_for($_)),
+			(eval { require Type::Parser })
+				? _parse_parameters($type)
+				: split(/,/, $1);
 		defined or return for @children;
 		$made = _parameterize_Tuple_for(\@children);
 	}
@@ -105,6 +115,33 @@ sub get_subname_for {
 	my $type = $_[0];
 	get_coderef_for($type) unless exists $names{$type};
 	$names{$type};
+}
+
+sub _parse_parameters {
+	my $got = Type::Parser::parse(@_);
+	$got->{params} or return;
+	_handle_expr($got->{params});
+}
+
+sub _handle_expr {
+	my $e = shift;
+	
+	if ($e->{type} eq 'list') {
+		return map _handle_expr($_), @{$e->{list}};
+	}
+	if ($e->{type} eq 'parameterized') {
+		my ($base) = _handle_expr($e->{base});
+		my @params = _handle_expr($e->{params});
+		return sprintf('%s[%s]', $base, join(q[,], @params));
+	}
+	if ($e->{type} eq 'expression' and $e->{op}->type eq Type::Parser::COMMA()) {
+		return _handle_expr($e->{lhs}), _handle_expr($e->{rhs})
+	}
+	if ($e->{type} eq 'primary') {
+		return $e->{token}->spelling;
+	}
+	
+	'****';
 }
 
 1;
