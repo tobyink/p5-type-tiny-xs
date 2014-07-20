@@ -16,7 +16,7 @@ my %names = (map +( $_ => __PACKAGE__ . "::$_" ), qw/
 	Any ArrayRef Bool ClassName CodeRef Defined
 	FileHandle GlobRef HashRef Int Num Object
 	Ref RegexpRef ScalarRef Str Undef Value
-	PositiveInt PositiveOrZeroInt NonEmptyStr
+	PositiveInt PositiveOrZeroInt NonEmptyStr Map
 /);
 $names{Item} = $names{Any};
 
@@ -56,6 +56,12 @@ sub get_coderef_for {
 	elsif ($type =~ /^HashRef\[(.+)\]$/) {
 		my $child = get_coderef_for($1) or return;
 		$made = _parameterize_HashRef_for($child);
+	}
+	
+	elsif ($type =~ /^Map\[(.+),(.+)\]$/) {
+		my $child1 = get_coderef_for($1) or return;
+		my $child2 = get_coderef_for($2) or return;
+		$made = _parameterize_Map_for( [$child1, $child2] );
 	}
 	
 	elsif ($type =~ /^Maybe\[(.+)\]$/) {

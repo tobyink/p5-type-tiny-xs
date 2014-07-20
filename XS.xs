@@ -284,6 +284,12 @@ typetiny_tc_HashRef(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 }
 
 int
+typetiny_tc_Map(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
+    assert(sv);
+    return IsHashRef(sv);
+}
+
+int
 typetiny_tc_CodeRef(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     return IsCodeRef(sv);
@@ -355,6 +361,32 @@ typetiny_parameterized_HashRef(pTHX_ SV* const param, SV* const sv) {
         while((he = hv_iternext(hv))){
             SV* const value = hv_iterval(hv, he);
             if(!typetiny_tc_check(aTHX_ param, value)){
+                hv_iterinit(hv); /* reset */
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static int
+typetiny_parameterized_Map(pTHX_ SV* const param, SV* const sv) {
+    if(IsHashRef(sv)){
+        HV* const hv  = (HV*)SvRV(sv);
+        HE* he;
+
+        AV* const params = (AV*)SvRV(param);
+        SV* const param1 = *av_fetch(params, 0, TRUE);
+        SV* const param2 = *av_fetch(params, 1, TRUE);
+
+        hv_iterinit(hv);
+        while((he = hv_iternext(hv))){
+            SV* const key   = hv_iterkeysv(he);
+            SV* const value = hv_iterval(hv, he);
+            
+            if(!typetiny_tc_check(aTHX_ param1, key)
+            || !typetiny_tc_check(aTHX_ param2, value)){
                 hv_iterinit(hv); /* reset */
                 return FALSE;
             }
@@ -675,6 +707,7 @@ BOOT:
     DEFINE_TC(ScalarRef);
     DEFINE_TC(ArrayRef);
     DEFINE_TC(HashRef);
+    DEFINE_TC(Map);
     DEFINE_TC(CodeRef);
     DEFINE_TC(GlobRef);
     DEFINE_TC(FileHandle);
@@ -699,6 +732,7 @@ CODE:
 #define TYPETINY_TC_MAYBE     0
 #define TYPETINY_TC_ARRAY_REF 1
 #define TYPETINY_TC_HASH_REF  2
+#define TYPETINY_TC_MAP       3
 
 CV*
 _parameterize_ArrayRef_for(SV* param)
@@ -706,12 +740,20 @@ ALIAS:
     _parameterize_ArrayRef_for = TYPETINY_TC_ARRAY_REF
     _parameterize_HashRef_for  = TYPETINY_TC_HASH_REF
     _parameterize_Maybe_for    = TYPETINY_TC_MAYBE
+    _parameterize_Map_for      = TYPETINY_TC_MAP
 CODE:
 {
     check_fptr_t fptr;
     SV* const tc_code = param;
-    if(!IsCodeRef(tc_code)){
-        croak("Didn't supply a CODE reference");
+    if(ix == TYPETINY_TC_MAP) {
+        if(!IsArrayRef(tc_code)){
+            croak("Didn't supply an ARRAY reference");
+        }
+    }
+    else {
+        if(!IsCodeRef(tc_code)){
+            croak("Didn't supply a CODE reference");
+        }
     }
 
     switch(ix){
@@ -721,6 +763,9 @@ CODE:
     case TYPETINY_TC_HASH_REF:
         fptr = typetiny_parameterized_HashRef;
         break;
+    case TYPETINY_TC_MAP:
+        fptr = typetiny_parameterized_Map;
+        break;
     default: /* Maybe type */
         fptr = typetiny_parameterized_Maybe;
     }
@@ -728,4 +773,3 @@ CODE:
 }
 OUTPUT:
     RETVAL
-
