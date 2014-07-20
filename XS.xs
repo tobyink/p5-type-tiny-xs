@@ -290,6 +290,12 @@ typetiny_tc_Map(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 }
 
 int
+typetiny_tc_Tuple(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
+    assert(sv);
+    return IsArrayRef(sv);
+}
+
+int
 typetiny_tc_CodeRef(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     return IsCodeRef(sv);
@@ -388,6 +394,30 @@ typetiny_parameterized_Map(pTHX_ SV* const param, SV* const sv) {
             if(!typetiny_tc_check(aTHX_ param1, key)
             || !typetiny_tc_check(aTHX_ param2, value)){
                 hv_iterinit(hv); /* reset */
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static int
+typetiny_parameterized_Tuple(pTHX_ SV* const param, SV* const sv) {
+    if(IsArrayRef(sv)){
+        AV* const av      = (AV*)SvRV(sv);
+        I32 const len = av_len(av) + 1;
+
+        AV* const params  = (AV*)SvRV(param);
+        if (len - 1 != av_len(params)) {
+            return FALSE;
+        }
+
+        I32 i;
+        for(i = 0; i < len; i++){
+            SV* const check = *av_fetch(params, i, TRUE);
+            SV* const value = *av_fetch(av, i, TRUE);
+            if(!typetiny_tc_check(aTHX_ check, value)){
                 return FALSE;
             }
         }
@@ -708,6 +738,7 @@ BOOT:
     DEFINE_TC(ArrayRef);
     DEFINE_TC(HashRef);
     DEFINE_TC(Map);
+    DEFINE_TC(Tuple);
     DEFINE_TC(CodeRef);
     DEFINE_TC(GlobRef);
     DEFINE_TC(FileHandle);
@@ -733,6 +764,7 @@ CODE:
 #define TYPETINY_TC_ARRAY_REF 1
 #define TYPETINY_TC_HASH_REF  2
 #define TYPETINY_TC_MAP       3
+#define TYPETINY_TC_TUPLE     4
 
 CV*
 _parameterize_ArrayRef_for(SV* param)
@@ -741,11 +773,12 @@ ALIAS:
     _parameterize_HashRef_for  = TYPETINY_TC_HASH_REF
     _parameterize_Maybe_for    = TYPETINY_TC_MAYBE
     _parameterize_Map_for      = TYPETINY_TC_MAP
+    _parameterize_Tuple_for    = TYPETINY_TC_TUPLE
 CODE:
 {
     check_fptr_t fptr;
     SV* const tc_code = param;
-    if(ix == TYPETINY_TC_MAP) {
+    if(ix == TYPETINY_TC_MAP || ix == TYPETINY_TC_TUPLE) {
         if(!IsArrayRef(tc_code)){
             croak("Didn't supply an ARRAY reference");
         }
@@ -765,6 +798,9 @@ CODE:
         break;
     case TYPETINY_TC_MAP:
         fptr = typetiny_parameterized_Map;
+        break;
+    case TYPETINY_TC_TUPLE:
+        fptr = typetiny_parameterized_Tuple;
         break;
     default: /* Maybe type */
         fptr = typetiny_parameterized_Maybe;
