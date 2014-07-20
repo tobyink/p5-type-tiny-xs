@@ -4,6 +4,7 @@
 
 `Type-Tiny-XS`
 	:runtime-requirement    [ :on "perl 5.010001"^^:CpanId ];
+	:runtime-suggestion     [ :on "Type::Parser"^^:CpanId ];
 	:test-requirement       [ :on "Test::More 0.92"^^:CpanId ];
 	.
 
