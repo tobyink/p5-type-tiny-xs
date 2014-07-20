@@ -41,3 +41,9 @@
 		item "Tuple (which will be used by a future release of Types::Standard)."^^Addition;
 		item "Attempt to load Type::Parser to handle the occasional complex type name parsing task."^^Change;
 	].
+
+`Type-Tiny-XS 0.007 cpan:TOBYINK`
+	issued  2014-07-20;
+	changeset [
+		item "Enum (which will be used by a future release of Types::Standard)."^^Addition;
+	].
