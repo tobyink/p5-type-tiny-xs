@@ -47,3 +47,10 @@
 	changeset [
 		item "Enum (which will be used by a future release of Types::Standard)."^^Addition;
 	].
+
+`Type-Tiny-XS 0.008 cpan:TOBYINK`
+	issued  2014-07-21;
+	changeset [
+		item "AnyOf (which will be used by a future release of Type::Tiny::Union)."^^Addition;
+		item "AllOf (which will be used by a future release of Type::Tiny::Intersection)."^^Addition;
+	].
