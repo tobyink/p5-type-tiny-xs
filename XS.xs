@@ -460,8 +460,21 @@ typetiny_parameterized_Maybe(pTHX_ SV* const param, SV* const sv) {
     return TRUE;
 }
 
+int
+typetiny_tc_AnyOf(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv PERL_UNUSED_DECL) {
+    assert(sv);
+    return FALSE;
+}
+
+int
+typetiny_tc_AllOf(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv PERL_UNUSED_DECL) {
+    assert(sv);
+    return TRUE;
+}
+
 static int
-typetiny_types_union_check(pTHX_ AV* const types, SV* const sv) {
+typetiny_parameterized_AnyOf(pTHX_ SV* const param, SV* const sv) {
+    AV *types = (AV*)SvRV(param);
     I32 const len = AvFILLp(types) + 1;
     I32 i;
 
@@ -475,7 +488,8 @@ typetiny_types_union_check(pTHX_ AV* const types, SV* const sv) {
 }
 
 static int
-typetiny_types_check(pTHX_ AV* const types, SV* const sv) {
+typetiny_parameterized_AllOf(pTHX_ SV* const param, SV* const sv) {
+    AV *types = (AV*)SvRV(param);
     I32 const len = AvFILLp(types) + 1;
     I32 i;
 
@@ -772,6 +786,8 @@ BOOT:
     DEFINE_TC(RegexpRef);
     DEFINE_TC(Object);
     DEFINE_TC(ClassName);
+    DEFINE_TC(AnyOf);
+    DEFINE_TC(AllOf);
 }
 
 #ifdef USE_ITHREADS
@@ -793,6 +809,8 @@ CODE:
 #define TYPETINY_TC_MAP       3
 #define TYPETINY_TC_TUPLE     4
 #define TYPETINY_TC_ENUM      5
+#define TYPETINY_TC_ANYOF     6
+#define TYPETINY_TC_ALLOF     7
 
 CV*
 _parameterize_ArrayRef_for(SV* param)
@@ -803,11 +821,17 @@ ALIAS:
     _parameterize_Map_for      = TYPETINY_TC_MAP
     _parameterize_Tuple_for    = TYPETINY_TC_TUPLE
     _parameterize_Enum_for     = TYPETINY_TC_ENUM
+    _parameterize_AnyOf_for    = TYPETINY_TC_ANYOF
+    _parameterize_AllOf_for    = TYPETINY_TC_ALLOF
 CODE:
 {
     check_fptr_t fptr;
     SV* const tc_code = param;
-    if(ix == TYPETINY_TC_MAP || ix == TYPETINY_TC_TUPLE || ix == TYPETINY_TC_ENUM) {
+    if(ix == TYPETINY_TC_MAP
+    || ix == TYPETINY_TC_TUPLE
+    || ix == TYPETINY_TC_ENUM
+    || ix == TYPETINY_TC_ANYOF
+    || ix == TYPETINY_TC_ALLOF) {
         if(!IsArrayRef(tc_code)){
             croak("Didn't supply an ARRAY reference");
         }
@@ -819,23 +843,29 @@ CODE:
     }
 
     switch(ix){
-    case TYPETINY_TC_ARRAY_REF:
-        fptr = typetiny_parameterized_ArrayRef;
-        break;
-    case TYPETINY_TC_HASH_REF:
-        fptr = typetiny_parameterized_HashRef;
-        break;
-    case TYPETINY_TC_MAP:
-        fptr = typetiny_parameterized_Map;
-        break;
-    case TYPETINY_TC_TUPLE:
-        fptr = typetiny_parameterized_Tuple;
-        break;
-    case TYPETINY_TC_ENUM:
-        fptr = typetiny_parameterized_Enum;
-        break;
-    default: /* Maybe type */
-        fptr = typetiny_parameterized_Maybe;
+        case TYPETINY_TC_ARRAY_REF:
+            fptr = typetiny_parameterized_ArrayRef;
+            break;
+        case TYPETINY_TC_HASH_REF:
+            fptr = typetiny_parameterized_HashRef;
+            break;
+        case TYPETINY_TC_MAP:
+            fptr = typetiny_parameterized_Map;
+            break;
+        case TYPETINY_TC_TUPLE:
+            fptr = typetiny_parameterized_Tuple;
+            break;
+        case TYPETINY_TC_ENUM:
+            fptr = typetiny_parameterized_Enum;
+            break;
+        case TYPETINY_TC_ANYOF:
+            fptr = typetiny_parameterized_AnyOf;
+            break;
+        case TYPETINY_TC_ALLOF:
+            fptr = typetiny_parameterized_AllOf;
+            break;
+        default: /* Maybe type */
+            fptr = typetiny_parameterized_Maybe;
     }
     RETVAL = typetiny_tc_generate(aTHX_ NULL, fptr, tc_code);
 }

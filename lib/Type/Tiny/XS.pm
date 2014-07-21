@@ -17,7 +17,7 @@ my %names = (map +( $_ => __PACKAGE__ . "::$_" ), qw/
 	FileHandle GlobRef HashRef Int Num Object
 	Ref RegexpRef ScalarRef Str Undef Value
 	PositiveInt PositiveOrZeroInt NonEmptyStr
-	Map Tuple Enum
+	Map Tuple Enum AnyOf AllOf
 /);
 $names{Item} = $names{Any};
 
@@ -73,14 +73,16 @@ sub get_coderef_for {
 		$made = _parameterize_Map_for( \@children );
 	}
 	
-	elsif ($type =~ /^Tuple\[(.+)\]$/) {
+	elsif ($type =~ /^(AnyOf|AllOf|Tuple)\[(.+)\]$/) {
+		my $base = $1;
 		my @children = 
 			map scalar(get_coderef_for($_)),
 			(eval { require Type::Parser })
 				? _parse_parameters($type)
-				: split(/,/, $1);
+				: split(/,/, $2);
 		defined or return for @children;
-		$made = _parameterize_Tuple_for(\@children);
+		my $maker = __PACKAGE__->can("_parameterize_${base}_for");
+		$made = $maker->(\@children) if $maker;
 	}
 	
 	elsif ($type =~ /^Maybe\[(.+)\]$/) {
