@@ -761,9 +761,8 @@ VERSIONCHECK: DISABLE
 
 BOOT:
 {
-    boot_Type__Tiny__XS__Util(aTHX_ cv);
-    
     MY_CXT_INIT;
+    boot_Type__Tiny__XS__Util(aTHX_ cv);
     setup_my_cxt(aTHX_ aMY_CXT);
     
     /* setup built-in type constraints */
