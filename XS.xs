@@ -722,11 +722,13 @@ XSPROTO(XS_TypeTiny_constraint_check) {
     SV* sv;
 
     if(items < 1){
-        croak("Too few arguments for type constraint check functions");
+        sv = &PL_sv_undef;
+    }
+    else {
+        sv = ST(0);
+        SvGETMAGIC(sv);
     }
 
-    sv = ST(0);
-    SvGETMAGIC(sv);
     ST(0) = boolSV( CALL_FPTR((check_fptr_t)mg->mg_ptr)(aTHX_ mg->mg_obj, sv) );
     XSRETURN(1);
 }
