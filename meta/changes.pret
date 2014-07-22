@@ -54,3 +54,15 @@
 		item "AnyOf (which will be used by a future release of Type::Tiny::Union)."^^Addition;
 		item "AllOf (which will be used by a future release of Type::Tiny::Intersection)."^^Addition;
 	].
+
+`Type-Tiny-XS 0.009 cpan:TOBYINK`
+	issued  2014-07-22;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Move variable declarations to the beginning of blocks, for better C90 compliance. Should compile now in MSVC.";
+			dcs:thanks cpan:JRMASH;
+			seealso <https://gist.github.com/jrmash/42e9e36606fb6e61597a>;
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/2>;
+		];
+	].
