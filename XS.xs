@@ -414,7 +414,7 @@ static int
 typetiny_parameterized_Tuple(pTHX_ SV* const param, SV* const sv) {
     I32 i;
     if(IsArrayRef(sv)){
-        AV* const av      = (AV*)SvRV(sv);
+        AV* const av  = (AV*)SvRV(sv);
         I32 const len = av_len(av) + 1;
 
         AV* const params  = (AV*)SvRV(param);
@@ -436,8 +436,8 @@ typetiny_parameterized_Tuple(pTHX_ SV* const param, SV* const sv) {
 
 static int
 typetiny_parameterized_Enum(pTHX_ SV* const param, SV* const sv) {
-    AV* const av;
-    I32 const len;
+    AV* av;
+    I32 len;
     I32 i;
     
     assert(sv);
