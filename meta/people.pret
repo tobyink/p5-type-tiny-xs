@@ -9,3 +9,6 @@ cpan:TOBYINK
 
 cpan:JRMASH
 	:name "Jason R Mash".
+
+cpan:JANDREW
+	:name "Jed Lund".

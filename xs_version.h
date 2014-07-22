@@ -1,3 +1,3 @@
 #ifndef XS_VERSION
-#define XS_VERSION "0.009"
+#define XS_VERSION "0.010"
 #endif

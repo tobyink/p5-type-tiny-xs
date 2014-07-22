@@ -63,6 +63,19 @@
 			label "Move variable declarations to the beginning of blocks, for better C90 compliance. Should compile now in MSVC.";
 			dcs:thanks cpan:JRMASH;
 			seealso <https://gist.github.com/jrmash/42e9e36606fb6e61597a>;
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/issues/2>;
 			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/2>;
+		];
+	].
+
+`Type-Tiny-XS 0.010 cpan:TOBYINK`
+	issued  2014-07-22;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Type constraint subs can now be called with no parameters and will pretend that you passed them undef. This makes them behave more like Type::Tiny's PP implementation, where there are no argument count checks.";
+			dcs:thanks cpan:JANDREW;
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/issues/1>;
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/1>;			
 		];
 	].
