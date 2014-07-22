@@ -75,7 +75,7 @@ sub get_coderef_for {
 	
 	elsif ($type =~ /^(AnyOf|AllOf|Tuple)\[(.+)\]$/) {
 		my $base = $1;
-		my @children = 
+		my @children =
 			map scalar(get_coderef_for($_)),
 			(eval { require Type::Parser })
 				? _parse_parameters($type)
