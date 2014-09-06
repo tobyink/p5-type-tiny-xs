@@ -6,7 +6,7 @@ use XSLoader ();
 package Type::Tiny::XS;
 
 our $AUTHORITY = 'cpan:TOBYINK';
-our $VERSION   = '0.010';
+our $VERSION   = '0.011';
 
 __PACKAGE__->XSLoader::load($VERSION);
 

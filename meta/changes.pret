@@ -79,3 +79,14 @@
 			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/1>;			
 		];
 	].
+
+`Type-Tiny-XS 0.011 cpan:TOBYINK`
+	issued  2014-09-07;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Fix for PositiveInt/PositiveOrZeroInt.";
+			dcs:thanks cpan:STEVENL;
+			dcs:fixes RT#98631;
+		];
+	].

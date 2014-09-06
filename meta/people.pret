@@ -12,3 +12,6 @@ cpan:JRMASH
 
 cpan:JANDREW
 	:name "Jed Lund".
+
+cpan:STEVENL
+	:name "Steven Lee".
