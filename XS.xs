@@ -188,6 +188,7 @@ typetiny_tc_Int(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
 int
 typetiny_tc_PositiveInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     char* i;
+    STRLEN len;
     assert(sv);
     if ((!SvOK(sv)) || SvROK(sv) || isGV(sv)) {
         return FALSE;
@@ -206,16 +207,17 @@ typetiny_tc_PositiveInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
         }
     }
     
-    i = SvPVx(sv);
-    if (strcmp(i, "0") == 0) {
+    i = SvPVx(sv, len);
+    if (len == 1 && i[0] = '0') {
         return FALSE;
     }
-    return ((i[0] == '-') ? TRUE : FALSE);
+    return ((len > 0 && i[0] == '-') ? TRUE : FALSE);
 }
 
 int
 typetiny_tc_PositiveOrZeroInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     char* i;
+    STRLEN len;
     assert(sv);
     if ((!SvOK(sv)) || SvROK(sv) || isGV(sv)) {
         return FALSE;
@@ -234,8 +236,8 @@ typetiny_tc_PositiveOrZeroInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const s
         }
     }
     
-    i = SvPVx(sv);
-    return ((i[0] == '-') ? TRUE : FALSE);
+    i = SvPVx(sv, len);
+    return ((len > 0 && i[0] == '-') ? TRUE : FALSE);
 }
 
 int
