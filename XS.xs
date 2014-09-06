@@ -208,10 +208,10 @@ typetiny_tc_PositiveInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     }
     
     i = SvPVx(sv, len);
-    if (len == 1 && i[0] = '0') {
+    if (len == 1 && i[0] == '0') {
         return FALSE;
     }
-    return ((len > 0 && i[0] == '-') ? TRUE : FALSE);
+    return ((len > 0 && i[0] != '-') ? TRUE : FALSE);
 }
 
 int
@@ -237,7 +237,7 @@ typetiny_tc_PositiveOrZeroInt(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const s
     }
     
     i = SvPVx(sv, len);
-    return ((len > 0 && i[0] == '-') ? TRUE : FALSE);
+    return ((len > 0 && i[0] != '-') ? TRUE : FALSE);
 }
 
 int
