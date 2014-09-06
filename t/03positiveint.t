@@ -21,7 +21,7 @@ the same terms as the Perl 5 programming language system itself.
 
 use strict;
 use warnings;
-use Test::More tests => 16;
+use Test::More tests => 20;
 
 use_ok('Type::Tiny::XS');
 
@@ -40,3 +40,8 @@ ok !Type::Tiny::XS::PositiveInt("1.2")    => 'no "1.2"';
 ok !Type::Tiny::XS::PositiveInt("1.0")    => 'no "1.0"';
 ok !Type::Tiny::XS::PositiveInt("123\n")  => 'no "123\\n"';
 ok !Type::Tiny::XS::PositiveInt("\n123")  => 'no "\\n123"';
+
+ok  Type::Tiny::XS::PositiveInt(   2 ** 30  ) => 'large positive int';
+ok  Type::Tiny::XS::PositiveInt(   2 ** 31  ) => 'very large positive int';
+ok !Type::Tiny::XS::PositiveInt( -(2 ** 30) ) => 'large negative int';
+ok !Type::Tiny::XS::PositiveInt( -(2 ** 31) ) => 'very large negative int';
