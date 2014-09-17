@@ -76,7 +76,7 @@
 			label "Type constraint subs can now be called with no parameters and will pretend that you passed them undef. This makes them behave more like Type::Tiny's PP implementation, where there are no argument count checks.";
 			dcs:thanks cpan:JANDREW;
 			seealso <https://github.com/tobyink/p5-type-tiny-xs/issues/1>;
-			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/1>;			
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/1>;
 		];
 	].
 
@@ -88,5 +88,14 @@
 			label "Fix for PositiveInt/PositiveOrZeroInt.";
 			dcs:thanks cpan:STEVENL;
 			dcs:fixes RT#98631;
+		];
+	].
+
+`Type-Tiny-XS 0.012 cpan:TOBYINK`
+	issued  2014-09-17;
+	changeset [
+		item [
+			a dcs:Packaging;
+			label "Repackage with newer Dist::Inkt to fix META.json error.";
 		];
 	].
