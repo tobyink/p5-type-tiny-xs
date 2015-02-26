@@ -176,7 +176,7 @@ to provide faster, C-based implementations of some type constraints.
 Type::Tiny, so other data validation frameworks might also consider
 using it!)
 
-Only the following two functions should be considered part of the
+Only the following three functions should be considered part of the
 supported API:
 
 =over
