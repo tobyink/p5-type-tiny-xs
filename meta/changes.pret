@@ -99,3 +99,19 @@
 			label "Repackage with newer Dist::Inkt to fix META.json error.";
 		];
 	].
+
+`Type-Tiny-XS 0.013 cpan:TOBYINK`
+	issued  2018-05-15;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Strings like '00' and '000' shouldn't be accepted as PositiveInt.";
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/issues/7>;
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/7>;
+			dcs:thanks [
+				a foaf:Person;
+				foaf:name "Will Storey";
+				foaf:page <https://github.com/horgh>;
+			];
+		];
+	].
