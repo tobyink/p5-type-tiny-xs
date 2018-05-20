@@ -86,6 +86,10 @@ int
 typetiny_tc_Bool(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
 
+    if (SvROK(sv)) {
+        return FALSE;
+    }
+
     if(sv_true(sv)){
         if(SvPOKp(sv)){ /* "1" */
             return SvCUR(sv) == 1 && SvPVX(sv)[0] == '1';
