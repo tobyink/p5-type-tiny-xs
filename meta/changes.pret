@@ -115,3 +115,19 @@
 			];
 		];
 	].
+
+`Type-Tiny-XS 0.014 cpan:TOBYINK`
+	issued  2018-05-20;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Bool was letting overloaded blessed objects pass the type constraint. It shouldn't.";
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/issues/5>;
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/5>;
+			dcs:thanks [
+				a foaf:Person;
+				foaf:name "Gregory Oschwald";
+				foaf:page <https://github.com/oschwald>;
+			];
+		];
+	].
