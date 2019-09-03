@@ -131,3 +131,15 @@
 			];
 		];
 	].
+
+`Type-Tiny-XS 0.015 cpan:TOBYINK`
+	issued  2019-09-03;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Casting a non-integer number to an integer elsewhere mistakenly caused the Int check to think the non-integer was an integer.";
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/issues/8>;
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/8>;
+			dcs:thanks cpan:OVID;
+		];
+	].

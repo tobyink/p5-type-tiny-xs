@@ -15,3 +15,6 @@ cpan:JANDREW
 
 cpan:STEVENL
 	:name "Steven Lee".
+
+cpan:OVID
+	:name "Curtis \"Ovid\" Poe".
