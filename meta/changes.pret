@@ -143,3 +143,15 @@
 			dcs:thanks cpan:OVID;
 		];
 	].
+
+`Type-Tiny-XS 0.016 cpan:TOBYINK`
+	issued  2019-09-05;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Fix Int check on large unsigned integers.";
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/pull/9>;
+			dcs:fixes <tdb:2014:https://github.com/tobyink/p5-type-tiny-xs/issues/8>;
+			dcs:blame cpan:HAARG;
+		];
+	].
