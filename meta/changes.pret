@@ -155,3 +155,16 @@
 			dcs:blame cpan:HAARG;
 		];
 	].
+
+
+`Type-Tiny-XS 0.017 cpan:TOBYINK`
+	issued  2020-04-28;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Fix segfault in BOOT.";
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/pull/11>;
+			dcs:fixes RT#130458;
+			dcs:blame cpan:XENU;
+		];
+	].

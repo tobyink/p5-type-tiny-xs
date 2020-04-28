@@ -21,3 +21,6 @@ cpan:OVID
 
 cpan:HAARG
 	:name "Graham Knop".
+
+cpan:XENU
+	:name "Tomasz Konojacki".
