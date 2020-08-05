@@ -181,3 +181,13 @@
 			label "Tests for InstanceOf";
 		];
 	].
+
+
+`Type-Tiny-XS 0.019 cpan:TOBYINK`
+	issued  2020-08-05;
+	changeset [
+		item [
+			a dcs:Packaging;
+			label "Remove some cruft that was accidentally packaged.";
+		];
+	].
