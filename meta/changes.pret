@@ -168,3 +168,16 @@
 			dcs:blame cpan:XENU;
 		];
 	].
+
+`Type-Tiny-XS 0.018 cpan:TOBYINK`
+	issued  2020-08-05;
+	changeset [
+		item [
+			a dcs:Change;
+			label "Slight speed boost for InstanceOf in cases where the object being tested overrides UNIVERSAL::isa.";
+		];
+		item [
+			a dcs:Tests;
+			label "Tests for InstanceOf";
+		];
+	].
