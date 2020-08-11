@@ -102,6 +102,31 @@ sub get_coderef_for {
 		$made = Type::Tiny::XS::Util::generate_can_predicate_for($methods);
 	}
 	
+	# Type::Tiny::Enum > 1.010003 double-quotes its enums
+	elsif ($type =~ /^Enum\[".*"\]$/) {
+		if (eval { require Type::Parser }) {
+			my $parsed = Type::Parser::parse($type);
+			if ($parsed->{type} eq "parameterized") {
+				my @todo = $parsed->{params};
+				my @strings;
+				my $bad;
+				while (my $todo = shift @todo) {
+					if ($todo->{type} eq 'list') {
+						push @todo, @{$todo->{list}};
+					} elsif ($todo->{type} eq "expression" && $todo->{op}->type eq Type::Parser::COMMA()) {
+						push @todo, $todo->{lhs}, $todo->{rhs};
+					} elsif ($todo->{type} eq "primary" && $todo->{token}->type eq "QUOTELIKE") {
+						push @strings, eval($todo->{token}->spelling);
+					} else {
+						# Unexpected entry in the parse-tree, bail out
+						$bad = 1;
+					}
+				}
+				$made = _parameterize_Enum_for(\@strings) unless $bad;
+			}
+		}
+	}
+	
 	elsif ($type =~ /^Enum\[(.+)\]$/) {
 		my $strings = [ sort(split /,/, $1) ];
 		$made = _parameterize_Enum_for($strings);
