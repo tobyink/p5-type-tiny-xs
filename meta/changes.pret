@@ -191,3 +191,13 @@
 			label "Remove some cruft that was accidentally packaged.";
 		];
 	].
+
+`Type-Tiny-XS 0.020 cpan:TOBYINK`
+	issued  2020-08-05;
+	changeset [
+		item [
+			label "Allow Enum[] to take a list of quoted strings rather than just barewords.";
+			seealso <https://github.com/tobyink/p5-type-tiny-xs/pull/12>;
+			dcs:blame cpan:AERUDER;
+		];
+	].

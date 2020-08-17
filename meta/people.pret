@@ -24,3 +24,6 @@ cpan:HAARG
 
 cpan:XENU
 	:name "Tomasz Konojacki".
+
+cpan:AERUDER
+	:name "Andrew Ruder".
