@@ -193,7 +193,7 @@
 	].
 
 `Type-Tiny-XS 0.020 cpan:TOBYINK`
-	issued  2020-08-05;
+	issued  2020-08-17;
 	changeset [
 		item [
 			label "Allow Enum[] to take a list of quoted strings rather than just barewords.";
