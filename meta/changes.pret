@@ -201,3 +201,12 @@
 			dcs:blame cpan:AERUDER;
 		];
 	].
+
+`Type-Tiny-XS 0.021 cpan:TOBYINK`
+	issued  2020-08-18;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Fix Enum test case for when Type::Parser is not available.";
+		];
+	].
