@@ -210,3 +210,12 @@
 			label "Fix Enum test case for when Type::Parser is not available.";
 		];
 	].
+
+`Type-Tiny-XS 0.022 cpan:TOBYINK`
+	issued  2020-09-25;
+	changeset [
+		item [
+			a dcs:Addition;
+			label "ArrayLike, HashLike, CodeLike, and StringLike checks.";
+		];
+	].
