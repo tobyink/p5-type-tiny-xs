@@ -269,7 +269,7 @@ typetiny_tc_StringLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     
     if ( SvOK(sv) && !SvROK(sv) && !isGV(sv) ) {
-        return true;
+        return TRUE;
     }
     
     if ( SvAMAGIC(sv)
@@ -280,10 +280,10 @@ typetiny_tc_StringLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     && ( cvp = amtp->table )
     && cvp[0x0a]  // AMG_STRING
     ) {
-        return true;
+        return TRUE;
     }
     
-    return false;
+    return FALSE;
 }
 
 int
@@ -340,7 +340,7 @@ typetiny_tc_ArrayLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     
     if ( IsArrayRef(sv) ) {
-        return true;
+        return TRUE;
     }
     
     if ( SvAMAGIC(sv)
@@ -351,10 +351,10 @@ typetiny_tc_ArrayLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     && ( cvp = amtp->table )
     && cvp[0x02]  // AMG_TO_AV
     ) {
-        return true;
+        return TRUE;
     }
     
-    return false;
+    return FALSE;
 }
 
 int
@@ -373,7 +373,7 @@ typetiny_tc_HashLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     
     if ( IsHashRef(sv) ) {
-        return true;
+        return TRUE;
     }
     
     if ( SvAMAGIC(sv)
@@ -384,10 +384,10 @@ typetiny_tc_HashLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     && ( cvp = amtp->table )
     && cvp[0x03]  // AMG_TO_HV
     ) {
-        return true;
+        return TRUE;
     }
     
-    return false;
+    return FALSE;
 }
 
 int
@@ -418,7 +418,7 @@ typetiny_tc_CodeLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     assert(sv);
     
     if ( IsCodeRef(sv) ) {
-        return true;
+        return TRUE;
     }
     
     if ( SvAMAGIC(sv)
@@ -429,10 +429,10 @@ typetiny_tc_CodeLike(pTHX_ SV* const data PERL_UNUSED_DECL, SV* const sv) {
     && ( cvp = amtp->table )
     && cvp[0x05]  // AMG_TO_CV
     ) {
-        return true;
+        return TRUE;
     }
     
-    return false;
+    return FALSE;
 }
 
 int
