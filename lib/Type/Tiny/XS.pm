@@ -43,11 +43,11 @@ if ( $] < '5.010000' ) {
 		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[&{}]);
 	};
 	*HashLike = sub {
-		ref($_[0]) eq 'CODE'
+		ref($_[0]) eq 'HASH'
 		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[%{}]);
 	};
 	*ArrayLike = sub {
-		ref($_[0]) eq 'CODE'
+		ref($_[0]) eq 'ARRAY'
 		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[@{}]);
 	};
 }
