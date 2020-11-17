@@ -30,4 +30,8 @@ ok Type::Tiny::XS::HashLike({}), '{}';
 ok Type::Tiny::XS::HashLike({ bar => 666 }), '{ bar => 666 }';
 ok !Type::Tiny::XS::HashLike(1), 'NOT 1';
 
+my $arrayof = Type::Tiny::XS::get_coderef_for('ArrayRef[HashLike]');
+ok $arrayof->( [ {}, {bar=>666}, $obj2 ] ), '$arrayof : 1';
+ok !$arrayof->( [ {}, {bar=>666}, $obj ]), '$arrayof : 2';
+
 done_testing;
