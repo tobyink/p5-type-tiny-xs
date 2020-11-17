@@ -12,11 +12,6 @@ __PACKAGE__->XSLoader::load( $VERSION );
 
 use Scalar::Util qw(refaddr);
 
-if ( $] < '5.010000' ) {
-	require MRO::Compat;
-	*Type::Tiny::XS::Util::get_linear_isa = \&mro::get_linear_isa;
-}
-
 my %names = (
 	map +( $_ => __PACKAGE__ . "::$_" ), qw/
 		Any ArrayRef Bool ClassName CodeRef Defined
@@ -28,6 +23,12 @@ my %names = (
 		/
 );
 $names{Item} = $names{Any};
+
+if ( $] < '5.010000' ) {
+	delete $names{$_} for qw/ ArrayLike HashLike CodeLike StringLike /;
+	require MRO::Compat;
+	*Type::Tiny::XS::Util::get_linear_isa = \&mro::get_linear_isa;
+}
 
 my %coderefs;
 
