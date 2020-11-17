@@ -26,3 +26,7 @@
 			copy($fallback, $file) or die "Can't copy $fallback to $file: $!";
 		}
 	}
+	
+	if ( $] < '5.010000' ) {
+		$meta->{prereqs}{runtime}{requires}{'MRO::Compat'} = 0;
+	}
