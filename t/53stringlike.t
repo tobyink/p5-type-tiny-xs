@@ -2,12 +2,6 @@ use strict;
 use warnings;
 use Test::More;
 
-BEGIN {
-	if ( $] < '5.010000' ) {
-		plan( skip_all => 'StringLike type only provided for Perl >= 5.010' );
-	}
-};
-
 use_ok('Type::Tiny::XS');
 
 {

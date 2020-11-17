@@ -25,9 +25,31 @@ my %names = (
 $names{Item} = $names{Any};
 
 if ( $] < '5.010000' ) {
-	delete $names{$_} for qw/ ArrayLike HashLike CodeLike StringLike /;
 	require MRO::Compat;
 	*Type::Tiny::XS::Util::get_linear_isa = \&mro::get_linear_isa;
+	
+	my $overloaded = sub {
+		require overload;
+		overload::Overloaded(ref $_[0] or $_[0]) and overload::Method((ref $_[0] or $_[0]), $_[1]);
+	};
+	
+	no warnings qw( uninitialized redefine once );
+	*StringLike = sub {
+		defined($_[0]) && !ref($_[0])
+		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[""]);
+	};
+	*CodeLike = sub {
+		ref($_[0]) eq 'CODE'
+		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[&{}]);
+	};
+	*HashLike = sub {
+		ref($_[0]) eq 'CODE'
+		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[%{}]);
+	};
+	*ArrayLike = sub {
+		ref($_[0]) eq 'CODE'
+		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[@{}]);
+	};
 }
 
 my %coderefs;
