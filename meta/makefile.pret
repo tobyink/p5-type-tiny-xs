@@ -3,7 +3,9 @@
 @prefix : <http://ontologi.es/doap-deps#>.
 
 `Type-Tiny-XS`
-	:runtime-requirement    [ :on "perl 5.010001"^^:CpanId ];
+	:configure-requirement  [ :on "ExtUtils::MakeMaker 6.58"^^:CpanId ];
+	:build-requirement      [ :on "ExtUtils::ParseXS 3.16"^^:CpanId ];
+	:runtime-requirement    [ :on "perl 5.008009"^^:CpanId ];
 	:runtime-suggestion     [ :on "Type::Parser"^^:CpanId ];
 	:test-requirement       [ :on "Test::More 0.92"^^:CpanId ];
 	.
