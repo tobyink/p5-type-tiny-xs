@@ -30,27 +30,28 @@ if ( $] < '5.010000' ) {
 	
 	my $overloaded = sub {
 		require overload;
-		overload::Overloaded(ref $_[0] or $_[0]) and overload::Method((ref $_[0] or $_[0]), $_[1]);
+		overload::Overloaded( ref $_[0] or $_[0] )
+			and overload::Method( ( ref $_[0] or $_[0] ), $_[1] );
 	};
 	
 	no warnings qw( uninitialized redefine once );
 	*StringLike = sub {
-		defined($_[0]) && !ref($_[0])
-		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[""]);
+		defined( $_[0] ) && !ref( $_[0] )
+			or Scalar::Util::blessed( $_[0] ) && $overloaded->( $_[0], q[""] );
 	};
 	*CodeLike = sub {
-		ref($_[0]) eq 'CODE'
-		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[&{}]);
+		ref( $_[0] ) eq 'CODE'
+			or Scalar::Util::blessed( $_[0] ) && $overloaded->( $_[0], q[&{}] );
 	};
 	*HashLike = sub {
-		ref($_[0]) eq 'HASH'
-		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[%{}]);
+		ref( $_[0] ) eq 'HASH'
+			or Scalar::Util::blessed( $_[0] ) && $overloaded->( $_[0], q[%{}] );
 	};
 	*ArrayLike = sub {
-		ref($_[0]) eq 'ARRAY'
-		or Scalar::Util::blessed($_[0]) && $overloaded->($_[0], q[@{}]);
+		ref( $_[0] ) eq 'ARRAY'
+			or Scalar::Util::blessed( $_[0] ) && $overloaded->( $_[0], q[@{}] );
 	};
-}
+} #/ if ( $] < '5.010000' [)
 
 my %coderefs;
 
