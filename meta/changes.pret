@@ -219,3 +219,16 @@
 			label "ArrayLike, HashLike, CodeLike, and StringLike checks.";
 		];
 	].
+
+`Type-Tiny-XS 0.023 cpan:TOBYINK`
+	issued  2022-10-18;
+	changeset [
+		item [
+			a dcs:Addition;
+			label "Parameterized versions of ArrayLike and HashLike.";
+		];
+		item [
+			a dcs:Tests;
+			label "Improved tests for ScalarRef.";
+		];
+	].
