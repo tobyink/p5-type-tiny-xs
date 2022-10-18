@@ -24,7 +24,7 @@ my %names = (
 );
 $names{Item} = $names{Any};
 
-if ( $] < '5.010000' ) {
+if ( $] lt '5.010000' ) {
 	require MRO::Compat;
 	*Type::Tiny::XS::Util::get_linear_isa = \&mro::get_linear_isa;
 	
@@ -85,6 +85,11 @@ sub get_coderef_for {
 	if ( $type =~ /^ArrayRef\[(.+)\]$/ ) {
 		my $child = get_coderef_for( $1 ) or return;
 		$made = _parameterize_ArrayRef_for( $child );
+	}
+	
+	elsif ( $] ge '5.010000' and $type =~ /^ArrayLike\[(.+)\]$/ ) {
+		my $child = get_coderef_for( $1 ) or return;
+		$made = _parameterize_ArrayLike_for( $child );
 	}
 	
 	elsif ( $type =~ /^HashRef\[(.+)\]$/ ) {
