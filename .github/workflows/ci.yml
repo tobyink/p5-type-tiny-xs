@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache ~/perl5
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: ${{ runner.os }}-dist-locallib
           path: ~/perl5
@@ -23,6 +23,11 @@ jobs:
       - name: Install local::lib
         run: |
           cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+      - name: Install Dist::Inkt dependencies
+        shell: bash
+        run: |
+          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+          cpanm -n Try::Tiny LWP::UserAgent Data::Dump
       - name: Install Dist::Inkt
         shell: bash
         run: |
@@ -34,7 +39,7 @@ jobs:
           eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
           ~/perl5/bin/distinkt-dist --TRAVIS --targetdir=build
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: ./
@@ -44,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get dist artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: dist
       - name: Install dependencies
@@ -70,7 +75,7 @@ jobs:
   test:
     name: Perl ${{ matrix.perl }} ${{ matrix.os }} ${{ matrix.joblabel }}
     needs: dist
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ ( ( matrix.os == 'strawberry') && 'windows-latest' ) || matrix.os }}
     env:
       GHA_TESTING_MODE:     ${{ matrix.extended_testing }}
       GHA_TESTING_COVER:    ${{ matrix.coverage }}
@@ -78,19 +83,17 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os:                 [ 'ubuntu' ]
+        os:                 [ 'ubuntu-latest' ]
         perl:               [ '5.8.5', '5.8.6', '5.8.7', '5.8.8', '5.8.9', '5.10.0', '5.10.1', '5.12', '5.14', '5.16', '5.18', '5.20', '5.22', '5.24', '5.26', '5.28', '5.30', '5.32' ]
-        threaded:           [ false ]
         coverage:           [ false ]
+        threaded:           [ null ]
         extra_dependencies: [ true ]
         extended_testing:   [ 'extended' ]
         exclude:
-          - { os: 'windows', perl: '5.8' }
-          - { os: 'windows', perl: '5.10' }
-          - { os: 'windows', perl: '5.12' }
+          - { os: 'windows-latest', perl: '5.4' }
         include:
-          - os: 'ubuntu'
-            perl: '5.30'
+          - os: 'ubuntu-latest'
+            perl: '5.36'
             threaded: false
             coverage: true
             extra_dependencies: true
@@ -98,7 +101,7 @@ jobs:
             joblabel: '(Coverage)'
     steps:
       - name: Get dist artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: dist
       - name: Set up perl
@@ -106,15 +109,13 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
           multi-thread: ${{ matrix.threaded }}
+          distribution: ${{ ( ( matrix.os == 'strawberry') && 'strawberry' ) || 'default' }}
       - name: Perl version
         run: |
           perl -v
-      - name: Configure
-        working-directory: ./build/
-        run: perl Makefile.PL
       - name: Install dependencies
         run: |
-          cpanm App::GhaProve
+          cpanm -n App::GhaProve
           cpanm -n --installdeps ./build
       - name: Install extra dependencies
         if: matrix.extra_dependencies || matrix.coverage
@@ -125,9 +126,12 @@ jobs:
           cpanm -n Devel::Cover
           cpanm -n Devel::Cover::Report::Coveralls
           cpanm -n Devel::Cover::Report::Codecov
+      - name: Configure
+        working-directory: ./build/
+        run: perl Makefile.PL
       - name: Make
         working-directory: ./build/
-        run: make
+        run: perl -MConfig -e'exec $Config{make}'
       - name: Clean coverage data
         if: matrix.coverage
         working-directory: ./build/
