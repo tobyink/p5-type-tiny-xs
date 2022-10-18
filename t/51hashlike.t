@@ -40,13 +40,15 @@ my $arrayof = Type::Tiny::XS::get_coderef_for('ArrayRef[HashLike]');
 ok $arrayof->( [ {}, {bar=>666}, $obj2 ] ), '$arrayof : 1';
 ok !$arrayof->( [ {}, {bar=>666}, $obj ]), '$arrayof : 2';
 
-my $hashlikeof = Type::Tiny::XS::get_coderef_for('HashLike[Num]');
-ok(   $hashlikeof->( { 1..4 } ) );
-ok( ! $hashlikeof->( { 1..4, xyz => 'foo' } ) );
-ok( ! $hashlikeof->( $obj ) );
-ok(   $hashlikeof->( $obj2 ) );
-ok( ! $hashlikeof->( bless [], 'Local::Overload3' ) );
-ok( ! $hashlikeof->( [] ) );
-ok(   $hashlikeof->( {} ) );
+if ( $] ge 5.010000 ) {
+	my $hashlikeof = Type::Tiny::XS::get_coderef_for('HashLike[Num]');
+	ok(   $hashlikeof->( { 1..4 } ) );
+	ok( ! $hashlikeof->( { 1..4, xyz => 'foo' } ) );
+	ok( ! $hashlikeof->( $obj ) );
+	ok(   $hashlikeof->( $obj2 ) );
+	ok( ! $hashlikeof->( bless [], 'Local::Overload3' ) );
+	ok( ! $hashlikeof->( [] ) );
+	ok(   $hashlikeof->( {} ) );
+}
 
 done_testing;

@@ -40,11 +40,13 @@ my $arrayof = Type::Tiny::XS::get_coderef_for('ArrayRef[ArrayLike]');
 ok $arrayof->( [ [], [1..3], $obj ] ), '$arrayof : 1';
 ok !$arrayof->( [ [], [1..3], $obj, $obj2 ]), '$arrayof : 2';
 
-my $arraylikeof = Type::Tiny::XS::get_coderef_for('ArrayLike[Num]');
-ok(   $arraylikeof->( [ 1..4 ] ) );
-ok( ! $arraylikeof->( [ 1..4, 'foo' ] ) );
-ok(   $arraylikeof->( $obj ) );
-ok( ! $arraylikeof->( bless {}, 'Local::Overload3' ) );
-ok( ! $arraylikeof->( $obj2 ) );
+if ( $] ge 5.010000 ) {
+	my $arraylikeof = Type::Tiny::XS::get_coderef_for('ArrayLike[Num]');
+	ok(   $arraylikeof->( [ 1..4 ] ) );
+	ok( ! $arraylikeof->( [ 1..4, 'foo' ] ) );
+	ok(   $arraylikeof->( $obj ) );
+	ok( ! $arraylikeof->( bless {}, 'Local::Overload3' ) );
+	ok( ! $arraylikeof->( $obj2 ) );
+}
 
 done_testing;
