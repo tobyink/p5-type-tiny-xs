@@ -97,6 +97,11 @@ sub get_coderef_for {
 		$made = _parameterize_HashRef_for( $child );
 	}
 	
+	elsif ( $] ge '5.010000' and $type =~ /^HashLike\[(.+)\]$/ ) {
+		my $child = get_coderef_for( $1 ) or return;
+		$made = _parameterize_HashLike_for( $child );
+	}
+	
 	elsif ( $type =~ /^Map\[(.+),(.+)\]$/ ) {
 		my @children;
 		if ( eval { require Type::Parser } ) {

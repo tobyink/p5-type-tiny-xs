@@ -562,6 +562,59 @@ typetiny_parameterized_HashRef(pTHX_ SV* const param, SV* const sv) {
 }
 
 static int
+typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
+    HV *stash;
+    MAGIC *mg;
+    AMT *amtp;
+    CV **cvp;
+    SV *retsv;
+   
+    assert(sv);
+    
+    if( IsHashRef(sv) ) {
+        return typetiny_parameterized_HashRef( param, sv );
+    }
+    
+    if( SvAMAGIC(sv)
+        && ( stash = SvSTASH(SvRV(sv)) )
+        && Gv_AMG(stash)
+        && ( mg = mg_find((const SV*)stash, PERL_MAGIC_overload_table) )
+        && AMT_AMAGIC( amtp = (AMT*)mg->mg_ptr )
+        && ( cvp = amtp->table )
+        && cvp[0x03]
+    ) {
+        dSP;
+        PUTBACK;
+        ENTER;
+        SAVETMPS;
+        EXTEND(SP, 1);
+        PUSHMARK(SP);
+        PUSHs(sv);
+        PUTBACK;
+        call_sv(cvp[0x03], G_SCALAR);
+        SPAGAIN;
+        retsv = POPs;
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+        
+        HV* const hv  = (HV*)SvRV(retsv);
+        HE* he;
+
+        hv_iterinit(hv);
+        while((he = hv_iternext(hv))){
+            SV* const value = hv_iterval(hv, he);
+            if(!typetiny_tc_check(aTHX_ param, value)){
+                hv_iterinit(hv); /* reset */
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static int
 typetiny_parameterized_Map(pTHX_ SV* const param, SV* const sv) {
     if(IsHashRef(sv)){
         HV* const hv  = (HV*)SvRV(sv);
@@ -1019,6 +1072,7 @@ CODE:
 #define TYPETINY_TC_ANYOF     6
 #define TYPETINY_TC_ALLOF     7
 #define TYPETINY_TC_ARRAYLIKE 8
+#define TYPETINY_TC_HASHLIKE  9
 
 CV*
 _parameterize_ArrayRef_for(SV* param)
@@ -1032,6 +1086,7 @@ ALIAS:
     _parameterize_AnyOf_for      = TYPETINY_TC_ANYOF
     _parameterize_AllOf_for      = TYPETINY_TC_ALLOF
     _parameterize_ArrayLike_for  = TYPETINY_TC_ARRAYLIKE
+    _parameterize_HashLike_for   = TYPETINY_TC_HASHLIKE
 CODE:
 {
     check_fptr_t fptr;
@@ -1075,6 +1130,9 @@ CODE:
             break;
         case TYPETINY_TC_ARRAYLIKE:
             fptr = typetiny_parameterized_ArrayLike;
+            break;
+        case TYPETINY_TC_HASHLIKE:
+            fptr = typetiny_parameterized_HashLike;
             break;
         default: /* Maybe type */
             fptr = typetiny_parameterized_Maybe;
