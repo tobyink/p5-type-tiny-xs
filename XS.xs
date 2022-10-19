@@ -501,7 +501,7 @@ typetiny_parameterized_ArrayLike(pTHX_ SV* const param, SV* const sv) {
     assert(sv);
     
     if( IsArrayRef(sv) ) {
-        return typetiny_parameterized_ArrayRef( param, sv );
+        return typetiny_parameterized_ArrayRef( aTHX_ param, sv );
     }
     
     if( SvAMAGIC(sv)
@@ -556,7 +556,7 @@ typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
     assert(sv);
     
     if( IsHashRef(sv) ) {
-        return typetiny_parameterized_HashRef( param, sv );
+        return typetiny_parameterized_HashRef( aTHX_ param, sv );
     }
     
     if( SvAMAGIC(sv)
