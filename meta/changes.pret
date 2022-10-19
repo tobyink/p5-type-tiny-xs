@@ -232,3 +232,12 @@
 			label "Improved tests for ScalarRef.";
 		];
 	].
+
+`Type-Tiny-XS 0.024 cpan:TOBYINK`
+	issued  2022-10-19;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Pointer casting in parameterized versions of ArrayLike and HashLike.";
+		];
+	].
