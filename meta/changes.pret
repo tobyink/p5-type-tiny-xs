@@ -238,6 +238,14 @@
 	changeset [
 		item [
 			a dcs:Bugfix;
-			label "Pointer casting in parameterized versions of ArrayLike and HashLike.";
+			label "Properly handle deep magic (in particular: overloaded objects returning references to tied arrays/hashes) in parameterized versions of ArrayLike and HashLike.";
+		];
+		item [
+			a dcs:Update;
+			label "Update bundled ppport.h";
+		];
+		item [
+			a dcs:Bugfix;
+			label "Fix the files in ./fallback";
 		];
 	].
