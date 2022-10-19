@@ -511,7 +511,7 @@ typetiny_parameterized_ArrayLike(pTHX_ SV* const param, SV* const sv) {
         && ( mg = mg_find((const SV*)stash, PERL_MAGIC_overload_table) )
         && AMT_AMAGIC( amtp = (AMT*)mg->mg_ptr )
         && ( cvp = amtp->table )
-        && cvp[0x02]
+        && cvp[0x02]  // AMG_TO_AV
     ) {
         dSP;
         PUTBACK;
@@ -521,7 +521,7 @@ typetiny_parameterized_ArrayLike(pTHX_ SV* const param, SV* const sv) {
         PUSHMARK(SP);
         PUSHs(sv);
         PUTBACK;
-        call_sv(cvp[0x02], G_SCALAR);
+        call_sv( (SV*)cvp[0x02], G_SCALAR );
         SPAGAIN;
         retsv = POPs;
         PUTBACK;
@@ -581,7 +581,7 @@ typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
         && ( mg = mg_find((const SV*)stash, PERL_MAGIC_overload_table) )
         && AMT_AMAGIC( amtp = (AMT*)mg->mg_ptr )
         && ( cvp = amtp->table )
-        && cvp[0x03]
+        && cvp[0x03]  // AMG_TO_HV
     ) {
         dSP;
         PUTBACK;
@@ -591,7 +591,7 @@ typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
         PUSHMARK(SP);
         PUSHs(sv);
         PUTBACK;
-        call_sv(cvp[0x03], G_SCALAR);
+        call_sv( (SV*)cvp[0x03], G_SCALAR );
         SPAGAIN;
         retsv = POPs;
         PUTBACK;
