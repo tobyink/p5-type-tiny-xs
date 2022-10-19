@@ -249,3 +249,16 @@
 			label "Fix the files in ./fallback";
 		];
 	].
+
+`Type-Tiny-XS 0.025 cpan:TOBYINK`
+	issued  2022-10-19;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Fix issues building on Debian.";
+		];
+		item [
+			a dcs:Bugfix;
+			label "The `amagic_deref_call` macro is not available in older Perl, so use `amagic_call` instead.";
+		];
+	].
