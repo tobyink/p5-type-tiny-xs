@@ -512,7 +512,7 @@ typetiny_parameterized_ArrayLike(pTHX_ SV* const param, SV* const sv) {
         && ( cvp = amtp->table )
         && cvp[0x02]  // AMG_TO_AV
     ) {
-        SV* const retsv = amagic_deref_call( sv, 0x02 );
+        SV* const retsv = amagic_call( sv, &PL_sv_undef, 0x02, AMGf_noright | AMGf_unary );
         AV* const av    = (AV*)SvRV(retsv);
         I32 const len   = av_len(av) + 1;
         I32 i;
@@ -567,7 +567,7 @@ typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
         && ( cvp = amtp->table )
         && cvp[0x03]  // AMG_TO_HV
     ) {
-        SV* const retsv = amagic_deref_call( sv, 0x03 );
+        SV* const retsv = amagic_call( sv, &PL_sv_undef, 0x03, AMGf_noright | AMGf_unary );
         HV* const hv    = (HV*)SvRV(retsv);
         HE* he;
 
