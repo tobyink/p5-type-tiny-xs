@@ -497,7 +497,6 @@ typetiny_parameterized_ArrayLike(pTHX_ SV* const param, SV* const sv) {
     MAGIC *mg;
     AMT *amtp;
     CV **cvp;
-    SV *retsv;
    
     assert(sv);
     
@@ -513,23 +512,9 @@ typetiny_parameterized_ArrayLike(pTHX_ SV* const param, SV* const sv) {
         && ( cvp = amtp->table )
         && cvp[0x02]  // AMG_TO_AV
     ) {
-        dSP;
-        PUTBACK;
-        ENTER;
-        SAVETMPS;
-        EXTEND(SP, 1);
-        PUSHMARK(SP);
-        PUSHs(sv);
-        PUTBACK;
-        call_sv( (SV*)cvp[0x02], G_SCALAR );
-        SPAGAIN;
-        retsv = POPs;
-        PUTBACK;
-        FREETMPS;
-        LEAVE;
-        
-        AV* const av  = (AV*)SvRV(retsv);
-        I32 const len = av_len(av) + 1;
+        SV* const retsv = amagic_deref_call( sv, 0x02 );
+        AV* const av    = (AV*)SvRV(retsv);
+        I32 const len   = av_len(av) + 1;
         I32 i;
         for(i = 0; i < len; i++){
             SV* const value = *av_fetch(av, i, TRUE);
@@ -567,7 +552,6 @@ typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
     MAGIC *mg;
     AMT *amtp;
     CV **cvp;
-    SV *retsv;
    
     assert(sv);
     
@@ -583,22 +567,8 @@ typetiny_parameterized_HashLike(pTHX_ SV* const param, SV* const sv) {
         && ( cvp = amtp->table )
         && cvp[0x03]  // AMG_TO_HV
     ) {
-        dSP;
-        PUTBACK;
-        ENTER;
-        SAVETMPS;
-        EXTEND(SP, 1);
-        PUSHMARK(SP);
-        PUSHs(sv);
-        PUTBACK;
-        call_sv( (SV*)cvp[0x03], G_SCALAR );
-        SPAGAIN;
-        retsv = POPs;
-        PUTBACK;
-        FREETMPS;
-        LEAVE;
-        
-        HV* const hv  = (HV*)SvRV(retsv);
+        SV* const retsv = amagic_deref_call( sv, 0x03 );
+        HV* const hv    = (HV*)SvRV(retsv);
         HE* he;
 
         hv_iterinit(hv);
