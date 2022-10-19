@@ -1,0 +1,94 @@
+name: GCC versions
+on:
+  - push
+  - pull_request
+jobs:
+  dist:
+    name: Make distribution using Dist::Inkt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Cache ~/perl5
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-dist-locallib
+          path: ~/perl5
+      - name: Perl version
+        run: |
+          perl -v
+      - name: Install cpanm
+        run: |
+          curl -L https://cpanmin.us | perl - --sudo App::cpanminus
+      - name: Install local::lib
+        run: |
+          cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+      - name: Install Dist::Inkt dependencies
+        shell: bash
+        run: |
+          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+          cpanm -n Try::Tiny LWP::UserAgent Data::Dump
+      - name: Install Dist::Inkt
+        shell: bash
+        run: |
+          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+          cpanm -n Dist::Inkt::Profile::TOBYINK
+      - name: Make distribution
+        shell: bash
+        run: |
+          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+          ~/perl5/bin/distinkt-dist --TRAVIS --targetdir=build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: ./
+  test:
+    name: Perl ${{ matrix.perl }} GCC ${{ matrix.gcc }} ${{ matrix.os }} ${{ matrix.joblabel }}
+    needs: dist
+    runs-on: ${{ matrix.os }}
+    env:
+      GHA_TESTING_MODE:     ${{ matrix.extended_testing }}
+      GHA_TESTING_COVER:    ${{ matrix.coverage }}
+      GHA_INSTALL_EXTRAS:   ${{ matrix.extra_dependencies }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os:                 [ 'ubuntu-latest' ]
+        perl:               [ '5.8.9', '5.12', '5.34', '5.36' ]
+        gcc:                [ '8', '9', '10', '11' ]
+        extended_testing:   [ 'extended' ]
+    steps:
+      - name: Get dist artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+      - name: Set up perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+          multi-thread: false
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: latest
+          platform: x64
+      - name: Perl version
+        run: perl -v
+      - name: GCC version
+        run: gcc -v
+      - name: Install dependencies
+        run: |
+          cpanm -n App::GhaProve
+          cpanm -n --installdeps ./build
+      - name: Install extra dependencies
+        run: cpanm -n --installdeps --with-recommends --with-suggests ./build || true
+      - name: Configure
+        working-directory: ./build/
+        run: perl Makefile.PL CC=`which gcc`
+      - name: Make
+        working-directory: ./build/
+        run: perl -MConfig -e'exec $Config{make}'
+      - name: Test suite
+        working-directory: ./build/
+        run: gha-prove -b -r t
